@@ -1,0 +1,23 @@
+name: Pylint static analysis
+
+on:
+  push:
+    paths:
+      - "server.py"
+      - ".github/workflows/pylint.yml"
+  workflow_dispatch:
+
+jobs:
+  pylint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: python -m pip install pylint flask requests
+      - name: Run Pylint on Flask server
+        run: python -m pylint server.py
