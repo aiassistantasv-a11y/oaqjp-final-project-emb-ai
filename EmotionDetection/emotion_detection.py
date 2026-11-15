@@ -1,10 +1,12 @@
 """Detect emotions in text using the IBM Watson NLP service."""
 
+import json
+
 import requests
 
 
 def emotion_detector(text_to_analyze):
-    """Return the raw JSON response from the emotion detection service."""
+    """Return emotion scores and the dominant emotion for the given text."""
     url = (
         "https://sn-watson-emotion.labs.skills.network/v1/"
         "watson.runtime.nlp.v1/NlpService/EmotionPredict"
@@ -21,4 +23,16 @@ def emotion_detector(text_to_analyze):
         timeout=15,
     )
     response.raise_for_status()
-    return response.text
+
+    response_data = json.loads(response.text)
+    emotion_scores = response_data["emotionPredictions"][0]["emotion"]
+    dominant_emotion = max(emotion_scores, key=emotion_scores.get)
+
+    return {
+        "anger": emotion_scores["anger"],
+        "disgust": emotion_scores["disgust"],
+        "fear": emotion_scores["fear"],
+        "joy": emotion_scores["joy"],
+        "sadness": emotion_scores["sadness"],
+        "dominant_emotion": dominant_emotion,
+    }
