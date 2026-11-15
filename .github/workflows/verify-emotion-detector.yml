@@ -1,0 +1,30 @@
+name: Verify Emotion Detector (Question 3)
+
+on:
+  push:
+    paths:
+      - ".github/workflows/verify-emotion-detector.yml"
+  workflow_dispatch:
+
+jobs:
+  test-emotion-detector:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: python -m pip install requests
+      - name: Import and test Watson NLP function
+        run: |
+          python - <<'PY'
+          from EmotionDetection.emotion_detection import emotion_detector
+
+          print(">>> from EmotionDetection.emotion_detection import emotion_detector", flush=True)
+          print(">>> emotion_detector('I love this new technology.')", flush=True)
+          result = emotion_detector("I love this new technology.")
+          print(repr(result), flush=True)
+          PY
